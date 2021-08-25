@@ -19,7 +19,6 @@ const parseMessage = (data) => {
         if(i >= 25) break;
         embed.addField(`conversion #${i+1}`,`${result[i].from} **➟** ${result[i].to}`)
     }
-    console.log(concatenated, result)
     embed.description = data
     return embed
 }

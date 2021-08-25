@@ -1,6 +1,10 @@
 # Converter
 adds "Auto Convert" to message context menu. Running that command will give you and embed with any units the bot could parse in the selected message and their conversion to the biggest alternative unit ( si units -> yankee units and the other way around )
 
+## missing a unit?
+fork this repo, edit https://github.com/ffamilyfriendly/converter/blob/main/lib/measurements.js, and make a PR and I'll test & merge it asap.
+if you are lazy you can also create an issue on this repo and I might add it for you
+
 ## my instance
 https://discord.com/api/oauth2/authorize?client_id=880097206818988043&permissions=0&scope=bot%20applications.commands
 
