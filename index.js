@@ -13,7 +13,7 @@ const help = new Interaction("CHAT_INPUT","info","displays some info about the b
  */
 const parseMessage = (data) => {
     const embed = new Embed()
-    const concatenated = str.replace("°","").replace(/(?<=\d) /gm,"").toLowerCase() + " "
+    const concatenated = data.replace("°","").replace(/(?<=\d) /gm,"").toLowerCase() + " "
     const result = doConversions(concatenated)
     for(let i = 0; i < result.length; i++) {
         if(i >= 25) break;
