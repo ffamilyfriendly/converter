@@ -1,6 +1,6 @@
 const config = require("dotenv").config().parsed,
     { Interaction, InteractionHandler, Embed } = require("./lib/interactions"),
-    { unitList, doConversions } = require("./lib/measurements")
+    { doConversions } = require("./lib/measurements")
 
 const handler = new InteractionHandler(config.TOKEN,"880097206818988043")
 const command = new Interaction("MESSAGE","Auto Convert")
@@ -13,7 +13,7 @@ const help = new Interaction("CHAT_INPUT","info","displays some info about the b
  */
 const parseMessage = (data) => {
     const embed = new Embed()
-    const concatenated = data.replace(/\.+ |°/gm,"").split(" ").join("").toLowerCase()
+    const concatenated = str.replace("°","").replace(/(?<=\d) /gm,"").toLowerCase() + " "
     const result = doConversions(concatenated)
     for(let i = 0; i < result.length; i++) {
         if(i >= 25) break;
