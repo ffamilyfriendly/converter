@@ -1,5 +1,5 @@
 const { Interaction, Embed, Option } = require("../lib/interactions")
-const { def, isValidSetting } = require("../utils/settings")
+const { def, isValidSetting, getUserSettings, setUserSettings } = require("../utils/settings")
 const command = new Interaction("CHAT_INPUT","setting","change your preferences for converter")
 
 const getSetting = new Option("SUB_COMMAND","get","displays value for settings")
@@ -29,14 +29,14 @@ command.onUsed((res) => {
         const valid = isValidSetting(key,value)
         embed.color = valid ? 0x32ad32 : 0xff0000
         if(valid) {
-
+            setUserSettings(res.user.id, key, value)
+            embed.addField("👌 sure thing, boss!", `**${key}** is now **${value}**`)
         } else {
             embed.addField("❌ No can do", `**${value}** is not an allowed value. Use \`/setting get setting:${key}\` to view allowed values`)
         }
     } else {
-        embed.addField("Currently",`**${def[key].default}**`)
+        embed.addField("Currently",`**${getUserSettings(res.user.id, key)}**`)
         embed.addField(`Allowed values`, def[key].allowed.join(", "))
-        console.log(res.options)
     }
     
     res.addEmbed(embed)
