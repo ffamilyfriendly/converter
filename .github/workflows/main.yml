@@ -12,9 +12,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install modules
       run: yarn
-    - name: install & init eslint
+    - name: install eslint
       run: yarn add eslint
-    - name: Init eslib
-      run: yarn run eslint --init
     - name: Run ESLint
-      run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
+      run: yarn run eslint ./ --ext .js,.jsx,.ts,.tsx
