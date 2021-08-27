@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Linter
 
 # Controls when the workflow will run
 on:
@@ -25,4 +25,4 @@ jobs:
       uses: stefanoeb/eslint-action@1.0.2
       with:
         # Blob of files to lint
-        files: . # optional, default is .
+        files: ./*.js # optional, default is .
