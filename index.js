@@ -1,10 +1,17 @@
 const config = require("dotenv").config().parsed,
-    { Interaction, InteractionHandler, Embed } = require("./lib/interactions"),
+    { Interaction, InteractionHandler, Embed, Option } = require("./lib/interactions"),
     { doConversions } = require("./lib/measurements")
 
-const handler = new InteractionHandler(config.TOKEN,"880097206818988043")
+const handler = new InteractionHandler(config.TOKEN,"592814450084675594")
 const command = new Interaction("MESSAGE","Auto Convert")
 const help = new Interaction("CHAT_INPUT","info","displays some info about the bot")
+const settings = new Interaction("CHAT_INPUT","setting","change your preferences for converter")
+
+const getSetting = new Option("SUB_COMMAND","get","displays value for settings")
+const setSetting = new Option("SUB_COMMAND","set","change value for settings")
+
+settings.addOption(getSetting)
+settings.addOption(setSetting)
 
 /**
  * 
@@ -43,10 +50,12 @@ help.onUsed((res) => {
 
 handler.handle(command)
 handler.handle(help)
+handler.handle(settings)
 
 if(process.argv[2]) {
     const id = process.argv[2] == "global" ? null : process.argv[2]
     help.addToDiscord(id)
     command.addToDiscord(id)
+    settings.addToDiscord(id)
 }
 
