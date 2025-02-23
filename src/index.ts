@@ -18,10 +18,10 @@ const tests = async () => {
       text: 'heya! I am 197cm tall. My little bro is 30cm but he lives 16100 cm away. Let us walk 50 meters ',
     },
     {
-      text: 'i drove 50km/h today :D My mate said he drove 100 mph but idk what that is',
+      text: 'i just bought a new lambo.. cost 2 BTC and $5 for gas',
     },
     {
-      text: 'yo i drove my car at like fucking 447 km/s today xd #yolo',
+      text: "it's currently 21:22 here. In the US its 3:30pm ",
     },
   ]
 

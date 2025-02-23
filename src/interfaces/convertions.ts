@@ -19,7 +19,7 @@ export interface ConversionResult {
   converted_value: number | string
 }
 
-export interface ConversionHandler {
+export interface ConversionHandler<> {
   handler_name: string
   requires_premium?: boolean
   base_intermediary_unit: string

@@ -110,6 +110,10 @@ export class MetricLength implements ConversionHandler {
     for (const whatever of data.matchAll(METRIC_REGEX)) {
       const value = whatever.groups?.['value'] || ''
       const unit = whatever.groups?.['unit'] || ''
+
+      // so it does not accidentally parse time as distance.. again
+      if (unit == 'pm') continue
+
       const as_mm = this.metric_to_millimeters(whatever)
 
       const as_imperial = this.default_opposite_unit.into_best_subunit(as_mm)
@@ -285,5 +289,109 @@ export class MetricSpeed implements ConversionHandler {
     }
 
     return return_value
+  }
+}
+
+const GRAM_REGEX = /(?<value>[0-9,.]+)( |)(gram|g) /gm
+const KG_REGEX = /(?<value>[0-9,.]+)( |)(kilogram|kilos|kilo|kgs|kg) /gm
+
+export class MetricMass implements ConversionHandler {
+  handler_name = 'Metric weight'
+  base_intermediary_unit = 'gram'
+  sub_units = ['gram', 'kilogram']
+  default_opposite_unit?: ConversionHandler | undefined
+
+  constructor(opposite?: ConversionHandler) {
+    this.default_opposite_unit = opposite
+  }
+
+  into_subunit(
+    as_intermediary: number,
+    subunit: string,
+  ): Result<number> | Promise<Result<number>> {
+    let result = 0
+    switch (subunit) {
+      case 'gram':
+        result = as_intermediary
+        break
+      case 'kilogram':
+        result = as_intermediary / 1000
+        break
+    }
+
+    return Ok(result)
+  }
+
+  into_best_subunit(
+    as_intermediary: number,
+  ): Result<{ unit: ConversionSymbol; value_as_unit: number | string }> {
+    const as_kilograms = as_intermediary / 1000
+
+    if (as_kilograms > 1)
+      return Ok({
+        unit: {
+          conversion_unit_name: 'kilogram',
+        },
+        value_as_unit: as_kilograms,
+      })
+
+    return Ok({
+      unit: {
+        conversion_unit_name: 'gram',
+      },
+      value_as_unit: as_intermediary,
+    })
+  }
+
+  into_intermediary(
+    as_unit: number,
+    subunit?: string,
+  ): Result<number> | Promise<Result<number>> {
+    return Ok(subunit === 'kilogram' ? as_unit * 1000 : as_unit)
+  }
+
+  convert(
+    data: string,
+    into_unit?: string,
+  ): ConversionResult[] | Promise<ConversionResult[]> {
+    let conversion_results: ConversionResult[] = []
+
+    if (!this.default_opposite_unit?.into_best_subunit) return []
+
+    for (const match of data.matchAll(KG_REGEX)) {
+      const value = Number.parseFloat(match.groups?.['value'] || '')
+      const as_imperial = this.default_opposite_unit.into_best_subunit(
+        value * 1000,
+      )
+
+      if (as_imperial.ok) {
+        conversion_results.push({
+          from_unit: {
+            conversion_unit_name: 'kilogram',
+          },
+          to_unit: as_imperial.data.unit,
+          converted_value: as_imperial.data.value_as_unit,
+          initial_value: value,
+        })
+      }
+    }
+
+    for (const match of data.matchAll(GRAM_REGEX)) {
+      const value = Number.parseFloat(match.groups?.['value'] || '')
+      const as_imperial = this.default_opposite_unit.into_best_subunit(value)
+
+      if (as_imperial.ok) {
+        conversion_results.push({
+          from_unit: {
+            conversion_unit_name: 'gram',
+          },
+          to_unit: as_imperial.data.unit,
+          converted_value: as_imperial.data.value_as_unit,
+          initial_value: value,
+        })
+      }
+    }
+
+    return conversion_results
   }
 }

@@ -1,17 +1,29 @@
 import { ConversionHandler, ConversionResult } from '../interfaces/convertions'
 import Currency from './currency'
-import { ImperialLength, ImperialSpeed } from './imperial'
-import { MetricLength, MetricSpeed } from './metric'
+import { ImperialLength, ImperialMass, ImperialSpeed } from './imperial'
+import { MetricLength, MetricMass, MetricSpeed } from './metric'
 import { Celcius, Fahrenheit } from './temperature'
+import { AmericanTime, NormalTime } from './time'
 
 const conversion_handlers: Set<ConversionHandler> = new Set([
+  // Metric units
   new MetricLength(new ImperialLength()),
   new MetricSpeed(new ImperialSpeed()),
+  new MetricMass(new ImperialMass()),
+
+  // American units
   new ImperialLength(new MetricLength()),
   new ImperialSpeed(new MetricSpeed()),
+  new ImperialMass(new MetricMass()),
+
+  // Assorted units
   new Celcius(new Fahrenheit()),
   new Fahrenheit(new Celcius()),
   new Currency(),
+
+  // Time
+  new NormalTime(new AmericanTime()),
+  new AmericanTime(new NormalTime()),
 ])
 
 export function add_conversion_handler(new_handler: ConversionHandler) {

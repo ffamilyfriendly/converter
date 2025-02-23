@@ -3,7 +3,7 @@ import {
   ConversionResult,
   ConversionSymbol,
 } from '../interfaces/convertions'
-import { Ok, Result, Yolo } from '../interfaces/result'
+import { Ok, Result, Unwrap, Yolo } from '../interfaces/result'
 import { MetricLength } from './metric'
 
 const FEET_REGEX =
@@ -313,5 +313,78 @@ export class ImperialSpeed implements ConversionHandler {
     }
 
     return return_value
+  }
+}
+
+const POUND_REGEX = /(?<value>[0-9,.]+)( |)(lbs|lb) /gm
+
+const LBS_TO_GRAM = 453.5924
+
+export class ImperialMass implements ConversionHandler {
+  handler_name = 'Imperial weight'
+  base_intermediary_unit = 'gram'
+  sub_units = ['pound']
+  default_opposite_unit?: ConversionHandler | undefined
+
+  constructor(opposite?: ConversionHandler) {
+    this.default_opposite_unit = opposite
+  }
+
+  into_subunit(
+    as_intermediary: number,
+    subunit: string,
+  ): Result<number> | Promise<Result<number>> {
+    return Ok(as_intermediary / LBS_TO_GRAM)
+  }
+
+  into_best_subunit(
+    as_intermediary: number,
+  ): Result<{ unit: ConversionSymbol; value_as_unit: number | string }> {
+    const as_lbs = as_intermediary / LBS_TO_GRAM
+
+    return Ok({
+      unit: {
+        conversion_unit_name: 'pound',
+        conversion_symbol: 'lbs',
+      },
+      value_as_unit: as_lbs,
+    })
+  }
+
+  into_intermediary(
+    as_unit: number,
+    subunit?: string,
+  ): Result<number> | Promise<Result<number>> {
+    return Ok(as_unit * LBS_TO_GRAM)
+  }
+
+  convert(
+    data: string,
+    into_unit?: string,
+  ): ConversionResult[] | Promise<ConversionResult[]> {
+    let conversion_results: ConversionResult[] = []
+
+    if (!this.default_opposite_unit?.into_best_subunit) return []
+
+    for (const match of data.matchAll(POUND_REGEX)) {
+      const value = Number.parseFloat(match.groups?.['value'] || '')
+      const as_metric = this.default_opposite_unit.into_best_subunit(
+        Yolo(this.into_intermediary(value, 'pounds')),
+      )
+
+      if (as_metric.ok) {
+        conversion_results.push({
+          from_unit: {
+            conversion_unit_name: 'pound',
+            conversion_symbol: 'lbs',
+          },
+          to_unit: as_metric.data.unit,
+          converted_value: as_metric.data.value_as_unit,
+          initial_value: value,
+        })
+      }
+    }
+
+    return conversion_results
   }
 }
