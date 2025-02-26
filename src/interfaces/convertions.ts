@@ -17,6 +17,7 @@ export interface ConversionResult {
   to_unit: ConversionSymbol
   initial_value: number | string
   converted_value: number | string
+  requires_premium?: boolean
 }
 
 export interface ConversionHandler<> {

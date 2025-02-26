@@ -111,6 +111,8 @@ export class MetricLength implements ConversionHandler {
       const value = whatever.groups?.['value'] || ''
       const unit = whatever.groups?.['unit'] || ''
 
+      console.log(unit)
+
       // so it does not accidentally parse time as distance.. again
       if (unit == 'pm') continue
 

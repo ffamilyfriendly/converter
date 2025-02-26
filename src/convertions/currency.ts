@@ -171,6 +171,7 @@ export default class Currency implements ConversionHandler {
           },
           initial_value: value,
           converted_value: res.data,
+          requires_premium: true,
         })
       }
     }

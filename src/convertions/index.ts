@@ -5,7 +5,7 @@ import { MetricLength, MetricMass, MetricSpeed } from './metric'
 import { Celcius, Fahrenheit } from './temperature'
 import { AmericanTime, NormalTime } from './time'
 
-const conversion_handlers: Set<ConversionHandler> = new Set([
+export const conversion_handlers: Set<ConversionHandler> = new Set([
   // Metric units
   new MetricLength(new ImperialLength()),
   new MetricSpeed(new ImperialSpeed()),
@@ -46,6 +46,7 @@ export async function convert_from_text(
       / seven /,
       / eight /,
       / nine /,
+      / ten /,
     ]
 
     for (let i = 0; i < number_list.length; i++) {
