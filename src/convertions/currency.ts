@@ -21,7 +21,7 @@ interface currency_list_object {
 
 let currency_cache: currency_list_object
 
-async function fetch_currency_list(
+export async function fetch_currency_list(
   route = MAIN_API,
 ): Promise<Result<currency_list_object>> {
   if (currency_cache) {

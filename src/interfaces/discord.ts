@@ -107,10 +107,20 @@ export interface MessageContextInteraction
     Resolveable<{ messages: { [id: string]: DiscordMessage } }>
   > {}
 
-interface I_AutocompleteOption {
+export interface I_Option {
   type: number
   name: string
-  value: string
+  value: string | number
+}
+
+interface I_SlashcmdOptions extends BaseDiscordData {
+  options: I_Option[]
+}
+
+export interface SlashCommandInteraction
+  extends BaseDiscordInteraction<I_SlashcmdOptions> {}
+
+export interface I_AutocompleteOption extends I_Option {
   focused: boolean
 }
 

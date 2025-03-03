@@ -1,10 +1,18 @@
 import dotenv from 'dotenv'
 import { DiscordWebhookClient } from './discord/client'
 import { run as auto_run_command } from './commands/auto_convert'
-import { MessageInteraction } from './discord/interaction'
+import { MessageInteraction, SlashInteraction } from './discord/interaction'
 import reg_commands from './utils/register_commands'
 import { argv } from 'process'
-import { handle_autocomplete } from './commands/manual_convert'
+import {
+  handle_autocomplete,
+  handle_command as manual_convert_run,
+} from './commands/manual_convert'
+import {
+  handle_settings_autocomplete,
+  handle_settings_command,
+} from './commands/settings'
+import { prepare_tables } from './database'
 
 dotenv.config()
 
@@ -31,6 +39,10 @@ if (faulty_configuration) {
   console.log(`✅ Configuration in order`)
 }
 
+console.log('Preparing database...')
+prepare_tables()
+console.log('database prepared :D')
+
 const client = new DiscordWebhookClient({
   public_key: process.env.DISCORD_PUBLIC_KEY || '',
   discord_token: process.env.DISCORD_TOKEN || '',
@@ -55,6 +67,16 @@ client.on('interaction', interaction => {
       if (interaction instanceof MessageInteraction)
         auto_run_command(interaction)
       break
+    case 'convert':
+      if (interaction instanceof SlashInteraction) {
+        manual_convert_run(interaction)
+      }
+      break
+    case 'currency':
+      if (interaction instanceof SlashInteraction) {
+        handle_settings_command(interaction)
+      }
+      break
   }
 })
 
@@ -62,6 +84,9 @@ client.on('autocomplete', interaction => {
   switch (interaction.command_name) {
     case 'convert':
       handle_autocomplete(interaction)
+    case 'currency':
+      handle_settings_autocomplete(interaction)
+      break
   }
 })
 

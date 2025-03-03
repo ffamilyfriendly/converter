@@ -22,6 +22,7 @@ const DEFAULT_COLOURS = {
   red: 0xff0000,
   green: 0x008000,
   pink: 0xff69b4,
+  bot_branding: 0x40f4ac,
 }
 
 type default_clrs = keyof typeof DEFAULT_COLOURS

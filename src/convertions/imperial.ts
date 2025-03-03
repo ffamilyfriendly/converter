@@ -38,16 +38,16 @@ export class ImperialLength implements ConversionHandler {
 
     switch (subunit) {
       case 'inch':
-        as_subunit = as_intermediary * MILLIMETERS_PER_INCH
+        as_subunit = as_intermediary / MILLIMETERS_PER_INCH
         break
       case 'feet':
-        as_subunit = as_intermediary * MILLIMETERS_PER_FEET
+        as_subunit = as_intermediary / MILLIMETERS_PER_FEET
         break
       case 'yard':
-        as_subunit = as_intermediary * MILLIMETERS_PER_YARD
+        as_subunit = as_intermediary / MILLIMETERS_PER_YARD
         break
       case 'mile':
-        as_subunit = as_intermediary * MILLIMETERS_PER_MILE
+        as_subunit = as_intermediary / MILLIMETERS_PER_MILE
         break
     }
 

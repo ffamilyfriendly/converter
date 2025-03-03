@@ -7,11 +7,15 @@ import {
   MessageContextInteraction,
   AutocompleteInteraction as I_AutocompleteInteraction,
   DiscordChoice,
+  I_AutocompleteOption,
+  SlashCommandInteraction,
+  I_Option,
 } from '../interfaces/discord'
 import { Response } from 'express'
 import { DiscordWebhookClient } from './client'
 import { Embed } from './embed'
 import { ActionRow } from './components'
+import { Option } from '../interfaces/commands'
 
 const DISCORD_CALLBACK_TYPES = {
   // Respond to an interaction with a message
@@ -118,11 +122,13 @@ export class BaseInteraction {
   readonly message?: DiscordMessage
   readonly command_name: string
   readonly command_id: string
+  user_id: string
+  has_been_responded = false
 
   constructor(data: BaseDiscordInteraction, ctx: ContextObject) {
+    console.log('WTHAT THE FUCK WHAT THE FUCKL')
     this.client = ctx.client
     this.http_handle = ctx.response
-
     this.id = data.id
     this.application_id = data.application_id
     this.interaction_type = data.type
@@ -136,6 +142,10 @@ export class BaseInteraction {
     this.message = data.message
     this.command_name = data.data.name
     this.command_id = data.data.id
+
+    this.user_id =
+      data.member?.user?.id || data.user?.id || '<SOMETHING WENT MAJORLY WRONG>'
+    console.log('USER_ID', this.user_id)
   }
 
   private check_flag(flag: number) {
@@ -160,6 +170,12 @@ export class BaseInteraction {
   }
 
   protected send_handle_response(type: number, data: SendHandleOptions) {
+    if (this.has_been_responded) {
+      console.warn('Attempt to respond to already handled interaction')
+      console.trace('stack')
+      return
+    }
+
     const data_object = {
       content: data.content,
       embeds: data.embeds?.map(embed => embed.into_object()),
@@ -172,9 +188,18 @@ export class BaseInteraction {
       data: { flags: this.response_flags, ...data_object },
     }
 
-    console.log(JSON.stringify(response_object))
-
+    this.has_been_responded = true
     this.http_handle.send(response_object)
+    this.http_handle.destroy()
+  }
+
+  reply_error(message: string, title?: string) {
+    const embed = new Embed()
+    embed.setColour('red')
+    embed.setDescription(message)
+    embed.setTitle(title || 'Something went wrong')
+
+    this.respond({ embeds: [embed] })
   }
 
   respond(message: string): void
@@ -208,8 +233,11 @@ export class MessageInteraction extends BaseInteraction {
 }
 
 export class AutocompleteInteraction extends BaseInteraction {
+  options: I_AutocompleteOption[]
+
   constructor(data: I_AutocompleteInteraction, ctx: ContextObject) {
     super(data, ctx)
+    this.options = data.data.options
   }
 
   override respond(message: string): void
@@ -229,6 +257,24 @@ export class AutocompleteInteraction extends BaseInteraction {
     this.send_handle_response(
       DISCORD_CALLBACK_TYPES.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
       { choices },
+    )
+  }
+}
+
+export class SlashInteraction extends BaseInteraction {
+  options: I_Option[]
+
+  constructor(data: SlashCommandInteraction, ctx: ContextObject) {
+    super(data, ctx)
+
+    this.options = data.data.options
+  }
+
+  get_option(name: string, assert_type?: 'string' | 'number') {
+    return this.options.find(
+      option =>
+        option.name === name &&
+        (assert_type ? typeof option.value == assert_type : true),
     )
   }
 }

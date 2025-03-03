@@ -1,11 +1,29 @@
 import { convert_from_text } from '../convertions'
+import { get_user_preffered_currency } from '../database'
 import { Embed } from '../discord/embed'
 import { MessageInteraction } from '../discord/interaction'
 
 export async function run(interaction: MessageInteraction) {
+  interaction.set_ephermal(true)
   const embed = new Embed()
+  embed.setColour('bot_branding')
+  let into_currency
+
+  if (interaction.user_id) {
+    const user_config = get_user_preffered_currency(interaction.user_id)
+
+    if (!user_config) {
+      embed.setFooter('Please run /currency to select a currency to use')
+    } else {
+      into_currency = user_config.currency
+    }
+  } else {
+    console.warn('author not exist???')
+  }
+
   const convertion_results = await convert_from_text(
     interaction.target_message.content,
+    into_currency,
   )
 
   let converted = ''

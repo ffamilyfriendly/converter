@@ -7,12 +7,14 @@ import {
   BaseDiscordRequest,
   MessageContextInteraction,
   AutocompleteInteraction as I_AutocompleteInteraction,
+  SlashCommandInteraction,
 } from '../interfaces/discord'
 import { IncomingMessage, ServerResponse } from 'http'
 import {
   AutocompleteInteraction,
   BaseInteraction,
   MessageInteraction,
+  SlashInteraction,
 } from './interaction'
 import { EventEmitter } from 'stream'
 import { ApplicationCommand } from '../interfaces/commands'
@@ -117,35 +119,43 @@ export class DiscordWebhookClient extends EventEmitter {
       case DISCORD_EVENT.PING:
         response.status(200).json({ type: 1 })
       case DISCORD_EVENT.EVENT:
-        console.log(body)
-
         const interaction = body as BaseDiscordInteraction
 
         let interaction_instance: BaseInteraction
-        console.log(interaction)
         switch (interaction.data.type) {
           case DISCORD_COMMAND_TYPES.MESSAGE:
-            console.log('MESSAGE INTERACTION')
             interaction_instance = new MessageInteraction(
               interaction as MessageContextInteraction,
               ctx,
             )
             break
+          case DISCORD_COMMAND_TYPES.CHAT_INPUT:
+            interaction_instance = new SlashInteraction(
+              interaction as SlashCommandInteraction,
+              ctx,
+            )
+            break
           default:
+            console.log(interaction)
+            console.log('^^^ UNKNOWN INTERACTION ^^^', interaction.data.type)
             interaction_instance = new BaseInteraction(interaction, ctx)
         }
         // Handle routing of event
         this.emit('interaction', interaction_instance)
+        break
 
-      case DISCORD_EVENT.AUTOCOMPLETE: {
-        const interaction = body as I_AutocompleteInteraction
-        const interaction_instance = new AutocompleteInteraction(
-          interaction,
-          ctx,
-        )
-
-        this.emit('autocomplete', interaction_instance)
-      }
+      case DISCORD_EVENT.AUTOCOMPLETE:
+        {
+          const interaction = body as I_AutocompleteInteraction
+          const interaction_instance = new AutocompleteInteraction(
+            interaction,
+            ctx,
+          )
+          this.emit('autocomplete', interaction_instance)
+        }
+        break
+      default:
+        console.log('YO WTF???')
     }
   }
 

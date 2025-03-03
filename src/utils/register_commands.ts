@@ -13,41 +13,15 @@ const AUTO_CONVERT_COMMAND: ApplicationCommand = {
 
 const SETTINGS_COMMAND: ApplicationCommand = {
   type: DISCORD_COMMAND_TYPES.CHAT_INPUT,
-  name: 'settings',
-  description: 'tweak converter to your liking!',
+  name: 'currency',
+  description: 'set your prefered currency',
   options: [
     {
-      type: DISCORD_OPTION_TYPES.SUB_COMMAND_GROUP,
-      name: 'set',
-      description: 'sets the value of a config option',
-      options: [
-        {
-          type: DISCORD_OPTION_TYPES.SUB_COMMAND,
-          name: 'currency',
-          description: 'select what currency you want conversions in',
-          options: [
-            {
-              type: DISCORD_OPTION_TYPES.STRING,
-              name: 'currency',
-              description: 'the currency you want',
-              required: true,
-              autocomplete: true,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      type: DISCORD_OPTION_TYPES.SUB_COMMAND_GROUP,
-      name: 'get',
-      description: 'shows the current value of a config option',
-      options: [
-        {
-          type: DISCORD_OPTION_TYPES.SUB_COMMAND,
-          name: 'currency',
-          description: 'displays what currency you set',
-        },
-      ],
+      type: DISCORD_OPTION_TYPES.STRING,
+      name: 'currency',
+      description: 'the currency you want values in',
+      required: true,
+      autocomplete: true,
     },
   ],
 }
