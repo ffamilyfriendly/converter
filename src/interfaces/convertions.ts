@@ -17,12 +17,10 @@ export interface ConversionResult {
   to_unit: ConversionSymbol
   initial_value: number | string
   converted_value: number | string
-  requires_premium?: boolean
 }
 
 export interface ConversionHandler<> {
   handler_name: string
-  requires_premium?: boolean
   base_intermediary_unit: string
   default_opposite_unit?: ConversionHandler
   sub_units: readonly string[]

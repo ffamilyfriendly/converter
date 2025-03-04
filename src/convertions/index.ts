@@ -1,7 +1,7 @@
 import { ConversionHandler, ConversionResult } from '../interfaces/convertions'
 import Currency from './currency'
 import { ImperialLength, ImperialMass, ImperialSpeed } from './imperial'
-import { MetricLength, MetricMass, MetricSpeed } from './metric'
+import { MetricLength, MetricMass, MetricSpeed, Misc } from './metric'
 import { Celcius, Fahrenheit } from './temperature'
 import { AmericanTime, NormalTime } from './time'
 import { randomUUID } from 'crypto'
@@ -50,6 +50,7 @@ export class ConvertionManager {
     american_time.default_opposite_unit = world_time
 
     const currency = new Currency()
+    const misc = new Misc()
 
     this.register_handlers([
       metric_length,
@@ -63,6 +64,7 @@ export class ConvertionManager {
       world_time,
       american_time,
       currency,
+      misc,
     ])
   }
 
@@ -78,7 +80,6 @@ export class ConvertionManager {
     let return_value: {
       handler: string
       matches: string
-      premium?: boolean
     }[] = []
 
     for (const [handler_id, handler] of this.handlers) {
@@ -96,7 +97,6 @@ export class ConvertionManager {
         return_value.push({
           handler: handler_id,
           matches: subunit,
-          premium: handler.requires_premium,
         })
       }
     }

@@ -1,19 +1,34 @@
 import { convert_from_text } from '../convertions'
-import { get_user_preffered_currency } from '../database'
+import { get_user_data } from '../database'
 import { Embed } from '../discord/embed'
 import { MessageInteraction } from '../discord/interaction'
+import {
+  check_paywall,
+  create_paywall_embed,
+  create_paywall_notice,
+} from '../utils/paywall'
 
 export async function run(interaction: MessageInteraction) {
   interaction.set_ephermal(true)
-  const embed = new Embed()
+
+  const paywall_check = check_paywall(interaction.user_id, interaction)
+
+  if (!paywall_check.paywall_ok) {
+    create_paywall_notice(interaction)
+    return
+  }
+
+  const embed = create_paywall_embed(paywall_check)
   embed.setColour('bot_branding')
   let into_currency
 
   if (interaction.user_id) {
-    const user_config = get_user_preffered_currency(interaction.user_id)
+    const user_config = get_user_data(interaction.user_id)
 
-    if (!user_config) {
-      embed.setFooter('Please run /currency to select a currency to use')
+    if (!user_config?.currency) {
+      embed.setDescription(
+        `Please set your desired currency with \`/currency\` for currency conversions!`,
+      )
     } else {
       into_currency = user_config.currency
     }
@@ -29,9 +44,19 @@ export async function run(interaction: MessageInteraction) {
   let converted = ''
 
   for (const result of convertion_results) {
-    converted += `- ${result.initial_value} ${result.from_unit.conversion_unit_name_plural || result.from_unit.conversion_unit_name} -> ${result.converted_value} ${result.to_unit.conversion_unit_name_plural || result.to_unit.conversion_unit_name}\n`
+    const display_converted_value =
+      typeof result.converted_value === 'number'
+        ? result.converted_value.toFixed(2)
+        : result.converted_value
+    converted += `- ${result.initial_value} *${result.from_unit.conversion_unit_name_plural || result.from_unit.conversion_unit_name}* converts into ${display_converted_value} *${result.to_unit.conversion_unit_name_plural || result.to_unit.conversion_unit_name}*\n`
   }
-  embed.addField('yay', converted)
+
+  if (convertion_results.length === 0)
+    embed.addField(
+      'No Units Found',
+      'did we miss a unit? Please join the support server and let us know!',
+    )
+  else embed.addField('Found Units', converted)
 
   interaction.respond({ embeds: [embed] })
 }

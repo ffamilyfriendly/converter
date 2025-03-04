@@ -8,6 +8,28 @@ import { ImperialLength, ImperialSpeed } from './imperial'
 
 const METRIC_REGEX = /(?<value>[0-9,.]+)( |)(?<unit>(\w+|)meter(s|)|(\w|)m) /gm
 
+const MICOMETER_PER_MILLIMETER = 0.001
+
+export class Misc implements ConversionHandler {
+  handler_name = 'micrometer'
+  base_intermediary_unit = 'millimeter'
+  sub_units = ['micrometer']
+
+  into_intermediary(
+    as_unit: number,
+    subunit?: string,
+  ): Result<number> | Promise<Result<number>> {
+    return Ok(as_unit * MICOMETER_PER_MILLIMETER)
+  }
+
+  into_subunit(
+    as_intermediary: number,
+    subunit: string,
+  ): Result<number> | Promise<Result<number>> {
+    return Ok(as_intermediary / MICOMETER_PER_MILLIMETER)
+  }
+}
+
 export class MetricLength implements ConversionHandler {
   handler_name = 'metric'
 

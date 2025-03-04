@@ -113,7 +113,6 @@ export async function get_currency_converted(
 
 export default class Currency implements ConversionHandler {
   handler_name = 'currency'
-  requires_premium = true
   base_intermediary_unit = 'eur'
   sub_units: readonly string[]
 
@@ -171,7 +170,6 @@ export default class Currency implements ConversionHandler {
           },
           initial_value: value,
           converted_value: res.data,
-          requires_premium: true,
         })
       }
     }

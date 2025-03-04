@@ -81,6 +81,8 @@ export interface BaseDiscordInteraction<T = BaseDiscordData>
   type: number // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
   app_permissions: string
   entitlements: DiscordEntitlement[]
+  entitlement_sku_ids: string[]
+  authorizing_integration_owners: { [id: string]: string }
   locale: string
   context?: number
 

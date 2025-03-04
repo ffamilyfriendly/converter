@@ -122,11 +122,13 @@ export class BaseInteraction {
   readonly message?: DiscordMessage
   readonly command_name: string
   readonly command_id: string
+  readonly sku_ids: string[]
+  readonly integration_owners: { [id: string]: string }
   user_id: string
   has_been_responded = false
 
   constructor(data: BaseDiscordInteraction, ctx: ContextObject) {
-    console.log('WTHAT THE FUCK WHAT THE FUCKL')
+    console.log(data)
     this.client = ctx.client
     this.http_handle = ctx.response
     this.id = data.id
@@ -142,10 +144,11 @@ export class BaseInteraction {
     this.message = data.message
     this.command_name = data.data.name
     this.command_id = data.data.id
+    this.sku_ids = data.entitlement_sku_ids
+    this.integration_owners = data.authorizing_integration_owners
 
     this.user_id =
       data.member?.user?.id || data.user?.id || '<SOMETHING WENT MAJORLY WRONG>'
-    console.log('USER_ID', this.user_id)
   }
 
   private check_flag(flag: number) {

@@ -68,7 +68,7 @@ export async function handle_command(interaction: SlashInteraction) {
   embed.setColour('bot_branding')
   embed.setTitle('Conversion done')
   embed.setDescription(
-    `${value.value} ${from_subunit} converts into ${converted_result.data} ${to_subunit}`,
+    `${value.value} *${from_subunit}* converts into ${converted_result.data} *${to_subunit}*`,
   )
 
   interaction.respond({ embeds: [embed] })
@@ -110,7 +110,7 @@ export async function handle_autocomplete(
   for (const handler of values_matching) {
     if (counter >= MAX_ALLOWED) break
     choices.push({
-      name: `${handler.premium ? '👑' : ''} ${handler.matches}`,
+      name: handler.matches,
       value: `${handler.handler}:${handler.matches}`,
     })
     counter++

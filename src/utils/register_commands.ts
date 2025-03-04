@@ -9,6 +9,7 @@ const AUTO_CONVERT_COMMAND: ApplicationCommand = {
   type: DISCORD_COMMAND_TYPES.MESSAGE,
   name: 'Auto Convert',
   description: '',
+  integration_types: [0, 1],
 }
 
 const SETTINGS_COMMAND: ApplicationCommand = {
@@ -24,6 +25,7 @@ const SETTINGS_COMMAND: ApplicationCommand = {
       autocomplete: true,
     },
   ],
+  integration_types: [0, 1],
 }
 
 const CONVERT_COMMAND: ApplicationCommand = {
@@ -52,6 +54,7 @@ const CONVERT_COMMAND: ApplicationCommand = {
       required: true,
     },
   ],
+  integration_types: [0, 1],
 }
 
 export default async function reg_commands(
