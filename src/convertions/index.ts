@@ -140,10 +140,6 @@ export async function convert_from_text(
     if (handler.convert) {
       const result = await handler.convert(text, into_unit)
       return_values.push(...result)
-    } else {
-      console.log(
-        `hander ${handler.handler_name} does not have a convert function...`,
-      )
     }
   }
 

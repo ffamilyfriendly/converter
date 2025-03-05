@@ -13,6 +13,7 @@ import {
   handle_settings_command,
 } from './commands/settings'
 import { prepare_tables } from './database'
+import { run_tests } from './tests'
 
 dotenv.config()
 
@@ -58,6 +59,13 @@ argv.forEach(value => {
       `Registering commands ${global ? 'globally' : 'on your dev server'}`,
     )
     reg_commands(client, global)
+  }
+
+  if (key === 'test') {
+    console.log('running tests')
+    run_tests()
+      .then(() => process.exit(0))
+      .catch(() => process.exit(1))
   }
 })
 

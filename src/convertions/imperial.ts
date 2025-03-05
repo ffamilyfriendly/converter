@@ -151,13 +151,13 @@ export class ImperialLength implements ConversionHandler {
         return_value = as_unit * MILLIMETERS_PER_FEET
         break
       case 'inch':
-        return_value = as_unit / MILLIMETERS_PER_INCH
+        return_value = as_unit * MILLIMETERS_PER_INCH
         break
       case 'yard':
-        return_value = as_unit / MILLIMETERS_PER_YARD
+        return_value = as_unit * MILLIMETERS_PER_YARD
         break
       case 'mile':
-        return_value = as_unit / MILLIMETERS_PER_MILE
+        return_value = as_unit * MILLIMETERS_PER_MILE
         break
     }
 
@@ -190,7 +190,9 @@ export class ImperialLength implements ConversionHandler {
 
     for (const match of data.matchAll(INCHES_REGEX)) {
       const value = match.groups?.['value'] || ''
-      const as_millis = Yolo(this.into_intermediary(Number.parseFloat(value)))
+      const as_millis = Yolo(
+        this.into_intermediary(Number.parseFloat(value), 'inch'),
+      )
       const as_metric = this.default_opposite_unit.into_best_subunit(as_millis)
 
       if (as_metric.ok) {
@@ -208,7 +210,9 @@ export class ImperialLength implements ConversionHandler {
 
     for (const match of data.matchAll(YARD_REGEX)) {
       const value = match.groups?.['value'] || ''
-      const as_millis = Yolo(this.into_intermediary(Number.parseFloat(value)))
+      const as_millis = Yolo(
+        this.into_intermediary(Number.parseFloat(value), 'yard'),
+      )
       const as_metric = this.default_opposite_unit.into_best_subunit(as_millis)
 
       if (as_metric.ok) {
@@ -225,7 +229,9 @@ export class ImperialLength implements ConversionHandler {
 
     for (const match of data.matchAll(MILES_REGEX)) {
       const value = match.groups?.['value'] || ''
-      const as_millis = Yolo(this.into_intermediary(Number.parseFloat(value)))
+      const as_millis = Yolo(
+        this.into_intermediary(Number.parseFloat(value), 'mile'),
+      )
       const as_metric = this.default_opposite_unit.into_best_subunit(as_millis)
 
       if (as_metric.ok) {
