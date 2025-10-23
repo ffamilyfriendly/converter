@@ -34,5 +34,6 @@ export interface ApplicationCommand {
   type: number
   description: string
   integration_types?: number[]
+  contexts?: number[]
   options?: Option[]
 }

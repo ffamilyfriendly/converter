@@ -10,6 +10,7 @@ const AUTO_CONVERT_COMMAND: ApplicationCommand = {
   name: 'Auto Convert',
   description: '',
   integration_types: [0, 1],
+  contexts: [0, 1, 2], 
 }
 
 const SETTINGS_COMMAND: ApplicationCommand = {
@@ -26,6 +27,7 @@ const SETTINGS_COMMAND: ApplicationCommand = {
     },
   ],
   integration_types: [0, 1],
+  contexts: [0, 1, 2], 
 }
 
 const CONVERT_COMMAND: ApplicationCommand = {
@@ -55,6 +57,7 @@ const CONVERT_COMMAND: ApplicationCommand = {
     },
   ],
   integration_types: [0, 1],
+  contexts: [0, 1, 2], // 0=Guild, 1=Bot DM, 2=Group DM
 }
 
 export default async function reg_commands(
